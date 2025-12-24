@@ -223,7 +223,7 @@ export default function Home() {
                   className="w-full text-center text-xs text-slate-400 hover:text-slate-200"
                 >
                   {authMode === "login"
-                    ? "New here? Create a Synletics account."
+                    ? "New here? Create a Synlitics account."
                     : "Already have an account? Log in."}
                 </button>
               </div>
@@ -244,7 +244,7 @@ export default function Home() {
                 Stage 1 · Secure Dropzone
               </p>
               <h2 className="mt-3 text-xl font-semibold text-slate-50">
-                Drop your exports. Synletics does the rest.
+                Drop your exports. Synlitics does the rest.
               </h2>
               <p className="mt-1 text-sm text-slate-400">
                 Drag your DoorDash, Uber Eats, and Grubhub exports here. We’ll
@@ -330,7 +330,7 @@ export default function Home() {
                 Stage 2 · Processing Terminal
               </p>
               <h2 className="mt-3 text-xl font-semibold text-slate-50">
-                Your exports are inside the Synletics engine.
+                Your exports are inside the Synlitics engine.
               </h2>
               <p className="mt-1 text-sm text-slate-400">
                 This is your black box of intelligence. We’re normalizing,
