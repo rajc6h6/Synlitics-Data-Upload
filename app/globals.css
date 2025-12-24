@@ -1,0 +1,21 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+html, body {
+  @apply min-h-screen;
+}
+
+body {
+  background-color: #020617;
+  background-image: theme("backgroundImage.noise"), theme("backgroundImage.radial-glow");
+  color: #e5e7eb;
+}
+
+.glass-card {
+  background: rgba(15,23,42,0.75);
+  border: 1px solid rgba(255,255,255,0.10);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  box-shadow: 0 24px 80px rgba(0,0,0,0.6);
+}
