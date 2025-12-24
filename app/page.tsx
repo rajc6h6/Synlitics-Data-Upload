@@ -147,10 +147,10 @@ export default function Home() {
       <div className="mx-auto flex w-full max-w-xl flex-col items-center gap-6">
         <div className="flex w-full justify-between text-xs text-slate-500">
           <a
-            href="https://synletics.com"
+            href="https://synlitics.com"
             className="hover:text-slate-300 transition"
           >
-            ← Back to synletics.com
+            ← Back to synlitics.com
           </a>
           {userId && (
             <button
