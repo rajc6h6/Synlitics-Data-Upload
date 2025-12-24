@@ -318,10 +318,10 @@ export default function Home() {
       <div className="mx-auto flex w-full max-w-2xl flex-col items-center gap-6">
         <div className="flex w-full justify-between text-xs text-slate-500">
           <a
-            href="https://synletics.com"
+            href="https://synlitics.com"
             className="hover:text-slate-300 transition"
           >
-            ← Back to synletics.com
+            ← Back to synlitics.com
           </a>
           {userId && (
             <div className="flex items-center gap-4">
@@ -401,7 +401,7 @@ export default function Home() {
                   className="w-full text-center text-xs text-slate-400 hover:text-slate-200"
                 >
                   {authMode === "login"
-                    ? "New here? Create a Synletics account."
+                    ? "New here? Create a Synlitics account."
                     : "Already have an account? Log in."}
                 </button>
               </div>
@@ -519,7 +519,7 @@ export default function Home() {
                 Stage 2 · Processing Terminal
               </p>
               <h2 className="mt-3 text-xl font-semibold text-slate-50">
-                Your data is inside the Synletics engine.
+                Your data is inside the Synlitics engine.
               </h2>
               <p className="mt-1 text-sm text-slate-400">
                 Processing {readySourcesCount} source{readySourcesCount !== 1 ? 's' : ''} for {profile?.restaurant_name}
