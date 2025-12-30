@@ -26,7 +26,8 @@ export default function Home() {
   const [error, setError] = useState<string | null>(null);
   
   // Onboarding
-  const [restaurantName, setRestaurantName] = useState("");
+const [restaurantName, setRestaurantName] = useState("");
+const [ownerName, setOwnerName] = useState(""); // ADD THIS
   
   // Upload state
   const [uploadedFiles, setUploadedFiles] = useState<Record<UploadSource, File | null>>({
@@ -155,40 +156,48 @@ export default function Home() {
     }
   };
 
-  const handleOnboarding = async () => {
-    if (!userId || !restaurantName.trim()) {
-      setError("Please enter a restaurant name");
-      return;
-    }
+const handleOnboarding = async () => {
+  if (!userId || !restaurantName.trim() || !ownerName.trim()) {
+    setError("Please enter both restaurant name and your name");
+    return;
+  }
+  
+  setLoading(true);
+  setError(null);
+  
+  try {
+    // Update user metadata with owner name
+    const { error: userError } = await supabase.auth.updateUser({
+      data: { full_name: ownerName.trim() }
+    });
     
-    setLoading(true);
-    setError(null);
-    
-    try {
-      const { error } = await supabase
-        .from("profiles")
-        .upsert({
-          id: userId,
-          restaurant_name: restaurantName.trim(),
-          updated_at: new Date().toISOString(),
-        });
-      
-      if (error) throw error;
-      
-      setProfile({ 
-        id: userId, 
+    if (userError) throw userError;
+
+    // Save restaurant name in profiles
+    const { error: profileError } = await supabase
+      .from("profiles")
+      .upsert({
+        id: userId,
         restaurant_name: restaurantName.trim(),
-        created_at: new Date().toISOString(),
         updated_at: new Date().toISOString(),
       });
-      
-      await loadTodayUpload(userId, restaurantName.trim());
-    } catch (e: any) {
-      setError(e.message ?? "Failed to save restaurant name");
-    } finally {
-      setLoading(false);
-    }
-  };
+    
+    if (profileError) throw profileError;
+    
+    setProfile({ 
+      id: userId, 
+      restaurant_name: restaurantName.trim(),
+      created_at: new Date().toISOString(),
+      updated_at: new Date().toISOString(),
+    });
+    
+    await loadTodayUpload(userId, restaurantName.trim());
+  } catch (e: any) {
+    setError(e.message ?? "Failed to save information");
+  } finally {
+    setLoading(false);
+  }
+};
 
   const handleFileSelect = (source: UploadSource, file: File | null) => {
     setUploadedFiles(prev => ({ ...prev, [source]: file }));
@@ -282,17 +291,18 @@ export default function Home() {
     }
   };
 
-  const handleLogout = async () => {
-    await supabase.auth.signOut();
-    setUserId(null);
-    setStage("auth");
-    setUploadedFiles({ UberEats: null, DoorDash: null, Grubhub: null, Offline: null });
-    setDailyUpload(null);
-    setProfile(null);
-    setEmail("");
-    setPassword("");
-    setRestaurantName("");
-  };
+const handleLogout = async () => {
+  await supabase.auth.signOut();
+  setUserId(null);
+  setStage("auth");
+  setUploadedFiles({ UberEats: null, DoorDash: null, Grubhub: null, Offline: null });
+  setDailyUpload(null);
+  setProfile(null);
+  setEmail("");
+  setPassword("");
+  setRestaurantName("");
+  setOwnerName(""); // ADD THIS
+};
 
   const cardVariants = {
     hidden: { opacity: 0, y: 20 },
@@ -408,47 +418,55 @@ export default function Home() {
             </motion.section>
           )}
 
-          {/* ONBOARDING STAGE */}
-          {stage === "onboarding" && (
-            <motion.section
-              key="onboarding"
-              variants={cardVariants}
-              initial="hidden"
-              animate="visible"
-              exit="exit"
-              transition={{ duration: 0.25 }}
-              className="glass-card w-full rounded-2xl px-8 py-10"
-            >
-              <p className="text-xs font-medium uppercase tracking-[0.18em] text-cyan-400">
-                Setup · Restaurant Profile
-              </p>
-              <h2 className="mt-3 text-xl font-semibold text-slate-50">
-                What's your restaurant name?
-              </h2>
-              <p className="mt-1 text-sm text-slate-400">
-                This will be used to organize your data exports.
-              </p>
+       {/* ONBOARDING STAGE */}
+{stage === "onboarding" && (
+  <motion.section
+    key="onboarding"
+    variants={cardVariants}
+    initial="hidden"
+    animate="visible"
+    exit="exit"
+    transition={{ duration: 0.25 }}
+    className="glass-card w-full rounded-2xl px-8 py-10"
+  >
+    <p className="text-xs font-medium uppercase tracking-[0.18em] text-cyan-400">
+      Setup · Restaurant Profile
+    </p>
+    <h2 className="mt-3 text-xl font-semibold text-slate-50">
+      Tell us about yourself
+    </h2>
+    <p className="mt-1 text-sm text-slate-400">
+      This information will be used to personalize your reports.
+    </p>
 
-              <div className="mt-6 space-y-4">
-                <input
-                  type="text"
-                  placeholder="e.g., Joe's Pizza Downtown"
-                  className="w-full rounded-lg border border-white/10 bg-slate-900/40 px-3 py-2 text-sm outline-none ring-0 focus:border-orange-500"
-                  value={restaurantName}
-                  onChange={(e) => setRestaurantName(e.target.value)}
-                  onKeyDown={(e) => e.key === 'Enter' && handleOnboarding()}
-                />
-                {error && <p className="text-xs text-red-400">{error}</p>}
-                <button
-                  onClick={handleOnboarding}
-                  disabled={loading || !restaurantName.trim()}
-                  className="mt-2 flex w-full items-center justify-center rounded-lg bg-gradient-to-r from-orange-500 to-cyan-400 px-3 py-2 text-sm font-semibold text-slate-950 shadow-lg shadow-orange-500/30 disabled:cursor-not-allowed disabled:opacity-60"
-                >
-                  {loading ? "Saving..." : "Continue to Upload"}
-                </button>
-              </div>
-            </motion.section>
-          )}
+    <div className="mt-6 space-y-4">
+      <input
+        type="text"
+        placeholder="Your full name (e.g., John Smith)"
+        className="w-full rounded-lg border border-white/10 bg-slate-900/40 px-3 py-2 text-sm outline-none ring-0 focus:border-orange-500"
+        value={ownerName}
+        onChange={(e) => setOwnerName(e.target.value)}
+        onKeyDown={(e) => e.key === 'Enter' && handleOnboarding()}
+      />
+      <input
+        type="text"
+        placeholder="Restaurant name (e.g., Joe's Pizza Downtown)"
+        className="w-full rounded-lg border border-white/10 bg-slate-900/40 px-3 py-2 text-sm outline-none ring-0 focus:border-orange-500"
+        value={restaurantName}
+        onChange={(e) => setRestaurantName(e.target.value)}
+        onKeyDown={(e) => e.key === 'Enter' && handleOnboarding()}
+      />
+      {error && <p className="text-xs text-red-400">{error}</p>}
+      <button
+        onClick={handleOnboarding}
+        disabled={loading || !restaurantName.trim() || !ownerName.trim()}
+        className="mt-2 flex w-full items-center justify-center rounded-lg bg-gradient-to-r from-orange-500 to-cyan-400 px-3 py-2 text-sm font-semibold text-slate-950 shadow-lg shadow-orange-500/30 disabled:cursor-not-allowed disabled:opacity-60"
+      >
+        {loading ? "Saving..." : "Continue to Upload"}
+      </button>
+    </div>
+  </motion.section>
+)}
 
           {/* UPLOAD STAGE */}
           {stage === "upload" && (
