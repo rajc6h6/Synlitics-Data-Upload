@@ -2,7 +2,7 @@ import "./globals.css";
 import { ReactNode } from "react";
 
 export const metadata = {
-  title: "Synletics — Upload & Track",
+  title: "Synlitics — Upload & Track",
 };
 
 export default function RootLayout({ children }: { children: ReactNode }) {
