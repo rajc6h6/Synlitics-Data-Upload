@@ -363,7 +363,7 @@ const handleLogout = async () => {
               className="glass-card w-full rounded-2xl px-8 py-10"
             >
               <p className="text-xs font-medium uppercase tracking-[0.18em] text-orange-500">
-                Synletics App
+                Synlitics App
               </p>
               <h1 className="mt-3 text-2xl font-semibold text-slate-50">
                 Welcome back, Owner.
